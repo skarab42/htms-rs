@@ -2,9 +2,10 @@
 #![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::cargo)]
 #![doc = include_str!("../readme.md")]
 
-use std::path::Path;
+use std::{env, path::PathBuf};
 
 use darling::FromMeta;
+use htms_core::template;
 use proc_macro::TokenStream;
 use quote::{format_ident, quote};
 use syn::{Item, ItemStruct, LitStr};
@@ -36,15 +37,28 @@ fn htms_impl(attributes: TokenStream, item: TokenStream) -> TokenStream {
         return quote! { compile_error!("#[htms] must be applied to a `struct`"); }.into();
     };
 
+    // TODO: add custom env var for template root directory ?
+    let manifest_dir = env::var("CARGO_MANIFEST_DIR");
+    let manifest_path = match manifest_dir {
+        Ok(dir) => PathBuf::from(&dir),
+        Err(error) => {
+            return syn::Error::new_spanned(
+                &attributes.template,
+                format!("#[htms] failed to get manifest directory: {error}"),
+            )
+            .to_compile_error()
+            .into();
+        },
+    };
+
     let template_attribute = attributes.template.value();
-    let manifest_path = Path::new(env!("CARGO_MANIFEST_DIR"));
     let input_template_path = manifest_path.join(&template_attribute);
-    let build_dir = manifest_path.join(".htms").join("build");
+    let build_dir = manifest_path.join(".htms").join("output");
     let output_template_path = build_dir.join(&template_attribute);
 
     // TODO: implement some sort of cache
-    // TODO: parse template file and get method names
-    if let Err(error) = htms_template::parse(input_template_path, output_template_path) {
+    // TODO: parse and get template method names
+    if let Err(error) = template::parse_and_build(input_template_path, output_template_path) {
         return syn::Error::new_spanned(
             &attributes.template,
             format!("#[htms] failed to parse template: {error}"),
@@ -72,7 +86,7 @@ fn htms_impl(attributes: TokenStream, item: TokenStream) -> TokenStream {
             #(#method_signatures)*
         }
 
-        impl #impl_generics ::htms_template::Template for #struct_ident #ty_generics #where_clause {
+        impl #impl_generics ::htms_core::template::Template for #struct_ident #ty_generics #where_clause {
              fn render(self) -> String {
                 "Rendered template...".to_string()
             }

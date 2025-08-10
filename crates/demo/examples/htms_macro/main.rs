@@ -1,8 +1,8 @@
+use htms_core::template::Template;
 use htms_macros::htms;
-use htms_template::Template;
 
 #[derive(Debug)]
-#[htms(template = "examples/index.html")]
+#[htms(template = "examples/htms_macro/index.html")]
 struct Index;
 
 impl IndexHtmsTemplate for Index {

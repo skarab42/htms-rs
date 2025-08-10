@@ -1,15 +1,16 @@
 [package]
-name = "htms_template"
+name = "htms_demo"
 description = "An experiment about HTM streaming"
 readme = "./readme.md"
 version = "0.1.0"
 edition = "2024"
 license = "MIT"
-repository = "https://github.com/skarab42/htms/crates/template"
+repository = "https://github.com/skarab42/htms/crates/demo"
 categories = ["template-engine"]
 keywords = ["html", "stream"]
 rust-version = "1.88"
 
 [dependencies]
-lol_html.workspace = true
-thiserror = "2.0.12"
+color-eyre.workspace = true
+htms_core.workspace = true
+htms_macros.workspace = true

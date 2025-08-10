@@ -1,7 +1,3 @@
-#![deny(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
-#![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::cargo)]
-#![doc = include_str!("../readme.md")]
-
 use std::{
     fs,
     fs::File,
@@ -38,9 +34,11 @@ pub enum Error {
 
 pub type Result<T, E = Error> = result::Result<T, E>;
 
+const CHUCK_BUFFER_SIZE: usize = 16 * 1024;
+
 // TODO: add documentation
 #[allow(clippy::missing_errors_doc, clippy::missing_panics_doc)]
-pub fn parse<P: AsRef<Path>>(input_path: P, output_path: P) -> Result<()> {
+pub fn parse_and_build<P: AsRef<Path>>(input_path: P, output_path: P) -> Result<()> {
     let input_path = input_path.as_ref();
     let mut input_file =
         File::open(input_path).map_err(|error| Error::OpenInputPath(input_path.into(), error))?;
@@ -71,16 +69,17 @@ pub fn parse<P: AsRef<Path>>(input_path: P, output_path: P) -> Result<()> {
         output_sink,
     );
 
-    let mut buf = [0u8; 16 * 1024];
+    let mut chuck_buffer = [0u8; CHUCK_BUFFER_SIZE];
+
     loop {
-        let n = input_file
-            .read(&mut buf)
+        let bytes_read = input_file
+            .read(&mut chuck_buffer)
             .map_err(|error| Error::ReadInputChunk(input_path.into(), error))?;
-        if n == 0 {
+        if bytes_read == 0 {
             break;
         }
         rewriter
-            .write(&buf[..n])
+            .write(&chuck_buffer[..bytes_read])
             .map_err(|error| Error::RewriterWrite(input_path.into(), error))?;
     }
 

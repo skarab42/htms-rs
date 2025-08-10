@@ -3,23 +3,26 @@ resolver = "2"
 members = ["crates/*"]
 
 [workspace.dependencies]
+color-eyre = "0"
 darling = "0"
 lol_html = "2"
 proc-macro2 = "1"
 quote = "1"
 syn = "2"
+thiserror = "2"
 
+htms_core = { path = "crates/core" }
+htms_demo = { path = "crates/demo" }
 htms_macros = { path = "crates/macros" }
-htms_template = { path = "crates/template" }
 
 [profile.dev]
-opt-level = 1
 debug = 2
 incremental = true
+opt-level = 1
 
 [profile.release]
-lto = "fat"
 codegen-units = 1
-strip = "symbols"
-panic = "abort"
 incremental = false
+lto = "fat"
+panic = "abort"
+strip = "symbols"
