@@ -2,7 +2,7 @@
 #![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::cargo)]
 #![doc = include_str!("../readme.md")]
 
-use std::{fs::File, path::Path};
+use std::path::Path;
 
 use darling::FromMeta;
 use proc_macro::TokenStream;
@@ -37,25 +37,21 @@ fn htms_impl(attributes: TokenStream, item: TokenStream) -> TokenStream {
     };
 
     let template_attribute = attributes.template.value();
-    let template_path = Path::new(env!("CARGO_MANIFEST_DIR")).join(&template_attribute);
+    let manifest_path = Path::new(env!("CARGO_MANIFEST_DIR"));
+    let input_template_path = manifest_path.join(&template_attribute);
+    let build_dir = manifest_path.join(".htms").join("build");
+    let output_template_path = build_dir.join(&template_attribute);
 
-    let template_file = match File::open(&template_path) {
-        Err(error) => {
-            return syn::Error::new_spanned(
-                &attributes.template,
-                format!(
-                    "#[htms] failed to read template `{}`: {error}",
-                    template_path.display()
-                ),
-            )
-            .to_compile_error()
-            .into();
-        },
-        Ok(item) => item,
-    };
-
-    println!("template_file: {template_file:?}");
-    // todo: parse template file and get method names
+    // TODO: implement some sort of cache
+    // TODO: parse template file and get method names
+    if let Err(error) = htms_template::parse(input_template_path, output_template_path) {
+        return syn::Error::new_spanned(
+            &attributes.template,
+            format!("#[htms] failed to parse template: {error}"),
+        )
+        .to_compile_error()
+        .into();
+    }
 
     let trait_ident = format_ident!("{}HtmsTemplate", struct_ident);
     let method_idents = ["news", "blog_posts"]

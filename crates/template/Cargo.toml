@@ -11,3 +11,5 @@ keywords = ["html", "stream"]
 rust-version = "1.88"
 
 [dependencies]
+lol_html.workspace = true
+thiserror = "2.0.12"
