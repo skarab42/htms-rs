@@ -3,6 +3,13 @@ resolver = "2"
 members = ["crates/*"]
 
 [workspace.dependencies]
+darling = "0"
+proc-macro2 = "1"
+quote = "1"
+syn = "2"
+
+htms_macros = { path = "crates/macros" }
+htms_template = { path = "crates/template" }
 
 [profile.dev]
 opt-level = 1
