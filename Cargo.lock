@@ -243,8 +243,8 @@ dependencies = [
 name = "htms_core"
 version = "0.1.0"
 dependencies = [
- "color-eyre",
  "lol_html",
+ "syn",
  "thiserror",
 ]
 

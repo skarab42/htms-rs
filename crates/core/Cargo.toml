@@ -11,6 +11,6 @@ keywords = ["html", "stream"]
 rust-version = "1.88"
 
 [dependencies]
-color-eyre.workspace = true
 lol_html.workspace = true
+syn = { workspace = true, features = ["full"] }
 thiserror.workspace = true

@@ -1,4 +1,5 @@
 use std::{
+    collections::BTreeSet,
     fs,
     fs::File,
     io::{self, Read, Write},
@@ -7,12 +8,15 @@ use std::{
 };
 
 use lol_html::{
-    HtmlRewriter, Settings, element, errors::RewritingError, html_content::ContentType,
+    HtmlRewriter, Settings, element,
+    errors::RewritingError,
+    html_content::{ContentType, Element, EndTag},
 };
+use syn::{Ident, parse_str};
 
-pub trait Template {
-    fn render(self) -> String;
-}
+static CHUCK_BUFFER_SIZE: usize = 16 * 1024;
+static STATIC_STYLE_CSS: &str = include_str!("static/style.css");
+static STATIC_ON_RESPONSE_JS: &str = include_str!("static/on_response.js");
 
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
@@ -30,15 +34,21 @@ pub enum Error {
     RewriterEnd(PathBuf, #[source] RewritingError),
     #[error("failed to flush output file: {0}: {1}")]
     FlushOutputFile(PathBuf, #[source] io::Error),
+    #[error("invalid attribute '{tag}[data-htms]' at byte offset {offset}: {source}")]
+    InvalidHtmsAttribute {
+        tag: String,
+        offset: usize,
+        source: syn::Error,
+    },
 }
 
 pub type Result<T, E = Error> = result::Result<T, E>;
 
-const CHUCK_BUFFER_SIZE: usize = 16 * 1024;
+pub type TaskNames = BTreeSet<String>;
 
 // TODO: add documentation
 #[allow(clippy::missing_errors_doc, clippy::missing_panics_doc)]
-pub fn parse_and_build<P: AsRef<Path>>(input_path: P, output_path: P) -> Result<()> {
+pub fn parse_and_build<P: AsRef<Path>>(input_path: P, output_path: P) -> Result<TaskNames> {
     let input_path = input_path.as_ref();
     let mut input_file =
         File::open(input_path).map_err(|error| Error::OpenInputPath(input_path.into(), error))?;
@@ -53,17 +63,65 @@ pub fn parse_and_build<P: AsRef<Path>>(input_path: P, output_path: P) -> Result<
         .map_err(|error| Error::CreateOutputFile(output_path.into(), error))?;
 
     let output_sink = |c: &[u8]| {
-        // TODO: handle errors
+        // TODO: handle errors?
         #[allow(clippy::expect_used)]
         output_file.write_all(c).expect("write chunk to file");
     };
 
+    let mut task_names = BTreeSet::new();
+
     let mut rewriter = HtmlRewriter::new(
         Settings {
-            element_content_handlers: vec![element!("title", |el| {
-                el.set_inner_content("My new title", ContentType::Text);
-                Ok(())
-            })],
+            element_content_handlers: vec![
+                element!("html>head", |el| {
+                    el.append("<style>", ContentType::Html);
+                    el.append(STATIC_STYLE_CSS, ContentType::Html);
+                    el.append("</style>", ContentType::Html);
+
+                    Ok(())
+                }),
+                element!(r#"[data-htms^="fn:"]"#, |el| {
+                    let attribute_value = el.get_attribute("data-htms").unwrap_or_default();
+                    let (_, method_name) =
+                        attribute_value.trim().split_once(':').unwrap_or_default();
+
+                    if let Err(source) = parse_str::<Ident>(method_name) {
+                        return Err(Error::InvalidHtmsAttribute {
+                            tag: el.tag_name(),
+                            offset: el.source_location().bytes().start,
+                            source,
+                        }
+                        .into());
+                    }
+
+                    el.set_attribute("data-htms", method_name)?;
+                    task_names.insert(method_name.to_string());
+
+                    Ok(())
+                }),
+                element!("body", |el: &mut Element| {
+                    el.append("<script>", ContentType::Html);
+                    el.append(STATIC_ON_RESPONSE_JS, ContentType::Html);
+                    el.append("</script>", ContentType::Html);
+
+                    if let Some(handlers) = el.end_tag_handlers() {
+                        handlers.push(Box::new(move |end: &mut EndTag| {
+                            end.remove();
+                            Ok(())
+                        }));
+                    }
+                    Ok(())
+                }),
+                element!("html", |el: &mut Element| {
+                    if let Some(handlers) = el.end_tag_handlers() {
+                        handlers.push(Box::new(|end: &mut EndTag| {
+                            end.remove();
+                            Ok(())
+                        }));
+                    }
+                    Ok(())
+                }),
+            ],
             ..Settings::default()
         },
         output_sink,
@@ -89,5 +147,7 @@ pub fn parse_and_build<P: AsRef<Path>>(input_path: P, output_path: P) -> Result<
 
     output_file
         .flush()
-        .map_err(|error| Error::FlushOutputFile(output_path.into(), error))
+        .map_err(|error| Error::FlushOutputFile(output_path.into(), error))?;
+
+    Ok(task_names)
 }

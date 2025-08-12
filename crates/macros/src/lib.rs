@@ -56,25 +56,31 @@ fn htms_impl(attributes: TokenStream, item: TokenStream) -> TokenStream {
     let build_dir = manifest_path.join(".htms").join("output");
     let output_template_path = build_dir.join(&template_attribute);
 
-    // TODO: implement some sort of cache
-    // TODO: parse and get template method names
-    if let Err(error) = template::parse_and_build(input_template_path, output_template_path) {
-        return syn::Error::new_spanned(
-            &attributes.template,
-            format!("#[htms] failed to parse template: {error}"),
-        )
-        .to_compile_error()
-        .into();
-    }
+    let template_include_str =
+        LitStr::new(&output_template_path.to_string_lossy(), struct_ident.span());
 
-    let trait_ident = format_ident!("{}HtmsTemplate", struct_ident);
-    let method_idents = ["news", "blog_posts"]
-        .into_iter()
+    // TODO: implement some sort of cache
+    let task_names = match template::parse_and_build(input_template_path, output_template_path) {
+        Ok(task_name) => task_name,
+        Err(error) => {
+            return syn::Error::new_spanned(
+                &attributes.template,
+                format!("#[htms] failed to parse template: {error}"),
+            )
+            .to_compile_error()
+            .into();
+        },
+    };
+
+    let trait_ident = format_ident!("{}Render", struct_ident);
+    let task_names_str = &task_names.iter().map(String::as_str).collect::<Vec<_>>();
+    let method_idents = task_names_str
+        .iter()
         .map(|n| format_ident!("{}_task", n))
         .collect::<Vec<_>>();
 
     let method_signatures = method_idents.iter().map(|m| {
-        quote! { fn #m(&self) -> impl ::core::future::Future<Output = ::std::string::String>; }
+        quote! { fn #m() -> impl ::core::future::Future<Output = ::std::string::String> + Send; }
     });
 
     let (impl_generics, ty_generics, where_clause) = struct_generics.split_for_impl();
@@ -86,13 +92,16 @@ fn htms_impl(attributes: TokenStream, item: TokenStream) -> TokenStream {
             #(#method_signatures)*
         }
 
-        impl #impl_generics ::htms_core::template::Template for #struct_ident #ty_generics #where_clause {
-             fn render(self) -> String {
-                "Rendered template...".to_string()
+        impl #impl_generics ::htms_core::render::Render for #struct_ident #ty_generics #where_clause {
+            fn tasks() -> Option<Vec<::htms_core::task::Task>> {
+                Some(vec![#(::htms_core::task::Task::new(#task_names_str, Self::#method_idents()),)*])
+            }
+
+            fn template() -> String {
+                include_str!(#template_include_str).to_string()
             }
         }
-    }
-    .into()
+    }.into()
 }
 
 #[proc_macro_attribute]

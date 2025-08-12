@@ -1,24 +1,21 @@
-use htms_core::template::Template;
+use htms_core::render::Render;
 use htms_macros::htms;
 
 #[derive(Debug)]
 #[htms(template = "examples/htms_macro/index.html")]
 struct Index;
 
-impl IndexHtmsTemplate for Index {
-    async fn news_task(&self) -> String {
+impl IndexRender for Index {
+    async fn blog_posts_task() -> String {
         todo!()
     }
 
-    async fn blog_posts_task(&self) -> String {
+    async fn news_task() -> String {
         todo!()
     }
 }
 
 fn main() {
-    let index = Index {};
-    println!("index: {index:?}");
-
-    let output = index.render();
+    let output = Index::render();
     println!("output: {}", output);
 }
