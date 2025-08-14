@@ -11,6 +11,10 @@ keywords = ["html", "stream"]
 rust-version = "1.88"
 
 [dependencies]
+async-stream.workspace = true
+bytes.workspace = true
+futures-core.workspace = true
+futures-util.workspace = true
 lol_html.workspace = true
 syn = { workspace = true, features = ["full"] }
 thiserror.workspace = true

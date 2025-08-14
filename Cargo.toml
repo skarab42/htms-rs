@@ -3,16 +3,20 @@ resolver = "2"
 members = ["crates/*"]
 
 [workspace.dependencies]
+async-stream = "0"
+bytes = "1"
 color-eyre = "0"
 darling = "0"
+futures-core = "0"
+futures-util = "0"
 lol_html = "2"
 proc-macro2 = "1"
 quote = "1"
 syn = "2"
 thiserror = "2"
+tokio = "1"
 
 htms_core = { path = "crates/core" }
-htms_demo = { path = "crates/demo" }
 htms_macros = { path = "crates/macros" }
 
 [profile.dev]

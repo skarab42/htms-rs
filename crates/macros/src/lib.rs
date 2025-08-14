@@ -60,7 +60,7 @@ fn htms_impl(attributes: TokenStream, item: TokenStream) -> TokenStream {
         LitStr::new(&output_template_path.to_string_lossy(), struct_ident.span());
 
     // TODO: implement some sort of cache
-    let task_names = match template::parse_and_build(input_template_path, output_template_path) {
+    let build = match template::parse_and_build(input_template_path, output_template_path) {
         Ok(task_name) => task_name,
         Err(error) => {
             return syn::Error::new_spanned(
@@ -73,7 +73,11 @@ fn htms_impl(attributes: TokenStream, item: TokenStream) -> TokenStream {
     };
 
     let trait_ident = format_ident!("{}Render", struct_ident);
-    let task_names_str = &task_names.iter().map(String::as_str).collect::<Vec<_>>();
+    let task_names_str = build
+        .task_names()
+        .iter()
+        .map(String::as_str)
+        .collect::<Vec<_>>();
     let method_idents = task_names_str
         .iter()
         .map(|n| format_ident!("{}_task", n))
@@ -85,6 +89,12 @@ fn htms_impl(attributes: TokenStream, item: TokenStream) -> TokenStream {
 
     let (impl_generics, ty_generics, where_clause) = struct_generics.split_for_impl();
 
+    let final_chunk_tokens = if build.has_html_tag() {
+        quote! { Some(::htms_core::Bytes::from_static(b"</body></html>")) }
+    } else {
+        quote! { None }
+    };
+
     quote! {
         #original_item
 
@@ -92,16 +102,21 @@ fn htms_impl(attributes: TokenStream, item: TokenStream) -> TokenStream {
             #(#method_signatures)*
         }
 
-        impl #impl_generics ::htms_core::render::Render for #struct_ident #ty_generics #where_clause {
-            fn tasks() -> Option<Vec<::htms_core::task::Task>> {
-                Some(vec![#(::htms_core::task::Task::new(#task_names_str, Self::#method_idents()),)*])
+        impl #impl_generics ::htms_core::Render for #struct_ident #ty_generics #where_clause {
+            fn tasks() -> Option<Vec<::htms_core::Task>> {
+                Some(vec![#(::htms_core::Task::new(#task_names_str, Self::#method_idents()),)*])
             }
 
-            fn template() -> String {
-                include_str!(#template_include_str).to_string()
+            fn template() -> ::htms_core::Bytes {
+                ::htms_core::Bytes::from_static(include_bytes!(#template_include_str))
+            }
+
+            fn final_chunk() -> Option<::htms_core::Bytes> {
+                #final_chunk_tokens
             }
         }
-    }.into()
+    }
+    .into()
 }
 
 #[proc_macro_attribute]
