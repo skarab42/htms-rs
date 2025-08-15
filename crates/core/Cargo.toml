@@ -10,8 +10,13 @@ categories = ["template-engine"]
 keywords = ["html", "stream"]
 rust-version = "1.88"
 
+[features]
+default = []
+axum = ["dep:axum"]
+
 [dependencies]
 async-stream.workspace = true
+axum = { workspace = true, optional = true }
 bytes.workspace = true
 futures-core.workspace = true
 futures-util.workspace = true

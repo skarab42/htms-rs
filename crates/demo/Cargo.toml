@@ -12,8 +12,9 @@ rust-version = "1.88"
 exclude = [".htms/**"]
 
 [dependencies]
+axum.workspace = true
 color-eyre.workspace = true
 futures-util.workspace = true
-htms_core.workspace = true
+htms_core = { workspace = true, features = ["axum"] }
 htms_macros.workspace = true
 tokio = { workspace = true, features = ["full"] }

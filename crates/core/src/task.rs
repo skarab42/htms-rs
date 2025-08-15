@@ -1,6 +1,5 @@
-use std::pin::Pin;
+use futures_core::future::BoxFuture;
 
-pub type BoxFuture<'a, T> = Pin<Box<dyn Future<Output = T> + Send + 'a>>;
 pub type TaskFuture = BoxFuture<'static, String>;
 
 pub struct Task {

@@ -2,6 +2,9 @@
 #![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::cargo)]
 #![doc = include_str!("../readme.md")]
 
+#[cfg(feature = "axum")]
+pub mod axum;
+
 pub mod render;
 pub mod task;
 pub mod template;
