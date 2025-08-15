@@ -9,10 +9,17 @@ use tokio::{
 };
 
 #[derive(Debug)]
-#[htms(template = "examples/htms_macro/index.html")]
-struct MacroExample;
+struct Context {
+    title: String,
+}
 
-impl MacroExampleRender for MacroExample {
+#[derive(Debug)]
+#[htms(template = "examples/context/index.html")]
+struct ContextExample {
+    context: Context,
+}
+
+impl ContextExampleRender for ContextExample {
     async fn blog_posts_task() -> String {
         sleep(Duration::from_millis(2000)).await;
         "<p>Some blog posts here :)</p>".to_string()
@@ -27,7 +34,7 @@ impl MacroExampleRender for MacroExample {
 #[tokio::main]
 async fn main() {
     let mut stdout = stdout();
-    let mut stream = Box::pin(MacroExample::render());
+    let mut stream = Box::pin(ContextExample::render());
 
     while let Some(bytes) = stream.next().await {
         stdout.write_all(&bytes).await.unwrap();

@@ -5,9 +5,9 @@ use tokio::time::sleep;
 
 #[derive(Debug)]
 #[htms(template = "examples/axum/pages/index.html")]
-pub struct Index;
+pub struct AxumExample;
 
-impl IndexRender for Index {
+impl AxumExampleRender for AxumExample {
     async fn blog_posts_task() -> String {
         sleep(Duration::from_millis(5000)).await;
         "<p>Some blog posts here :)</p>".to_string()

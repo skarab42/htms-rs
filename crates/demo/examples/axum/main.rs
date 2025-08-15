@@ -11,13 +11,13 @@ use futures_util::StreamExt;
 use htms_core::{Bytes, Render, axum::HtmlStream};
 use tokio::net;
 
-use crate::index::Index;
+use crate::index::AxumExample;
 
 #[path = "pages/index.rs"]
 mod index;
 
 async fn handler() -> Response {
-    HtmlStream::from(Index::render().map(Ok::<Bytes, Infallible>)).into_response()
+    HtmlStream::from(AxumExample::render().map(Ok::<Bytes, Infallible>)).into_response()
 }
 
 #[tokio::main]
