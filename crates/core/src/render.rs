@@ -24,7 +24,7 @@ pub trait Render: Sized {
     }
 
     #[must_use]
-    fn render() -> impl Stream<Item = Bytes> {
+    fn render(self) -> impl Stream<Item = Bytes> {
         stream! {
             yield Self::template();
 

@@ -16,5 +16,5 @@ axum.workspace = true
 color-eyre.workspace = true
 futures-util.workspace = true
 htms_core = { workspace = true, features = ["axum"] }
-htms_macros.workspace = true
+htms_derive.workspace = true
 tokio = { workspace = true, features = ["full"] }

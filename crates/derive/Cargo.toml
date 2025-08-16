@@ -1,11 +1,11 @@
 [package]
-name = "htms_macros"
+name = "htms_derive"
 description = "An experiment about HTM streaming"
 readme = "./readme.md"
 version = "0.1.0"
 edition = "2024"
 license = "MIT"
-repository = "https://github.com/skarab42/htms/crates/macros"
+repository = "https://github.com/skarab42/htms/crates/derive"
 categories = ["template-engine"]
 keywords = ["html", "stream"]
 rust-version = "1.88"

@@ -1,18 +1,17 @@
 use std::time::Duration;
 
 use futures_util::StreamExt;
-use htms_core::Render;
-use htms_macros::htms;
+use htms_derive::Template;
 use tokio::{
     io::{AsyncWriteExt, stdout},
     time::sleep,
 };
 
-#[derive(Debug)]
-#[htms(template = "examples/htms_macro/index.html")]
-struct MacroExample;
+#[derive(Template, Debug, Default)]
+#[template = "examples/derive/index.html"]
+struct DeriveExample {}
 
-impl MacroExampleRender for MacroExample {
+impl DeriveExampleRender for DeriveExample {
     async fn blog_posts_task() -> String {
         sleep(Duration::from_millis(2000)).await;
         "<p>Some blog posts here :)</p>".to_string()
@@ -27,7 +26,8 @@ impl MacroExampleRender for MacroExample {
 #[tokio::main]
 async fn main() {
     let mut stdout = stdout();
-    let mut stream = Box::pin(MacroExample::render());
+    let example = DeriveExample::default();
+    let mut stream = Box::pin(example.render());
 
     while let Some(bytes) = stream.next().await {
         stdout.write_all(&bytes).await.unwrap();

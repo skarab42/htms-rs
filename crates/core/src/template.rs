@@ -68,7 +68,10 @@ impl Build {
 
 // TODO: add documentation
 #[allow(clippy::missing_errors_doc, clippy::missing_panics_doc)]
-pub fn parse_and_build<P: AsRef<Path>>(input_path: P, output_path: P) -> Result<Build> {
+pub fn parse_and_build<I: AsRef<Path>, A: AsRef<Path>>(
+    input_path: I,
+    output_path: A,
+) -> Result<Build> {
     let input_path = input_path.as_ref();
     let mut input_file =
         File::open(input_path).map_err(|error| Error::OpenInputPath(input_path.into(), error))?;

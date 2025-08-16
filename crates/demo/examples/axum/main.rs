@@ -17,7 +17,9 @@ use crate::index::AxumExample;
 mod index;
 
 async fn handler() -> Response {
-    HtmlStream::from(AxumExample::render().map(Ok::<Bytes, Infallible>)).into_response()
+    let stream = AxumExample::default().render().map(Ok::<Bytes, Infallible>);
+
+    HtmlStream::from(stream).into_response()
 }
 
 #[tokio::main]

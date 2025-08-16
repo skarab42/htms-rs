@@ -404,12 +404,12 @@ dependencies = [
  "color-eyre",
  "futures-util",
  "htms_core",
- "htms_macros",
+ "htms_derive",
  "tokio",
 ]
 
 [[package]]
-name = "htms_macros"
+name = "htms_derive"
 version = "0.1.0"
 dependencies = [
  "darling",
