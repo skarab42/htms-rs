@@ -7,7 +7,7 @@ use crate::task::Task;
 
 pub trait Render: Sized {
     fn template() -> Bytes;
-    fn tasks() -> Option<Vec<Task>>;
+    fn tasks(self) -> Option<Vec<Task>>;
 
     #[must_use]
     fn response(id: &str, html: &str) -> Bytes {
@@ -28,7 +28,7 @@ pub trait Render: Sized {
         stream! {
             yield Self::template();
 
-            if let Some(tasks) = Self::tasks() {
+            if let Some(tasks) = self.tasks() {
                 let mut tasks_unordered = FuturesUnordered::new();
 
                 for task in tasks {

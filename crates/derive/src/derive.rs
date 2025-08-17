@@ -51,7 +51,7 @@ struct TemplateInput {
 pub fn template(input: &DeriveInput) -> Result<TokenStream> {
     let template_input = TemplateInput::from_derive_input(input)?;
     let template_path_lit = get_template_path_lit(&template_input)?;
-    let _context_field = find_context_field(&template_input)?;
+    let context_field = find_context_field(&template_input)?;
 
     // TODO: allow to override the build path by env var
     let crate_path = PathBuf::from(env::var("CARGO_MANIFEST_DIR")?);
@@ -76,9 +76,18 @@ pub fn template(input: &DeriveInput) -> Result<TokenStream> {
         .map(|name| (name.as_str(), format_ident!("{}_task", name)))
         .collect::<(Vec<_>, Vec<_>)>();
 
+    let (task_arguments, context_field) = match context_field {
+        Some(context) => {
+            let ty = context.ty;
+            let ident = context.ident;
+            (quote! { context: #ty }, quote! { self.#ident.clone() })
+        },
+        None => (quote! {}, quote! {}),
+    };
+
     let base_trait = quote! {
         pub trait #input_trait_ident {
-            #(fn #method_idents() -> impl ::core::future::Future<Output = ::std::string::String> + Send + 'static;)*
+            #(fn #method_idents(#task_arguments) -> impl ::core::future::Future<Output = ::std::string::String> + Send + 'static;)*
         }
     };
 
@@ -92,8 +101,8 @@ pub fn template(input: &DeriveInput) -> Result<TokenStream> {
          use ::htms_core::Render;
 
          impl #impl_generics ::htms_core::Render for #input_struct_ident #ty_generics #where_clause {
-            fn tasks() -> Option<Vec<::htms_core::Task>> {
-                Some(vec![#(::htms_core::Task::new(#task_names, Self::#method_idents()),)*])
+            fn tasks(self) -> Option<Vec<::htms_core::Task>> {
+                Some(vec![#(::htms_core::Task::new(#task_names, Self::#method_idents(#context_field)),)*])
             }
 
             fn template() -> ::htms_core::Bytes {
