@@ -176,3 +176,126 @@ pub fn parse_and_build<I: AsRef<Path>, A: AsRef<Path>>(
 
     Ok(build)
 }
+
+#[cfg(test)]
+#[allow(clippy::expect_used, clippy::panic, clippy::unwrap_used)]
+mod parse_and_build {
+    use std::{
+        fs,
+        io::Write,
+        path::PathBuf,
+        time::{SystemTime, UNIX_EPOCH},
+    };
+
+    use super::{Build, STATIC_ON_RESPONSE_JS, STATIC_STYLE_CSS, parse_and_build};
+    use crate::template;
+
+    fn unique_path(prefix: &str, extension: &str) -> PathBuf {
+        let nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("get nanos since epoch")
+            .as_nanos();
+
+        std::env::temp_dir().join(format!("{prefix}_{nanos}.{extension}"))
+    }
+
+    fn write_input_file(contents: &str) -> PathBuf {
+        let path = unique_path("htms_test_input", "html");
+
+        let mut file = fs::File::create(&path).expect("create input file");
+
+        file.write_all(contents.as_bytes())
+            .expect("write input file");
+
+        path
+    }
+
+    fn read_output_string(path: &PathBuf) -> String {
+        fs::read_to_string(path).expect("read output file")
+    }
+
+    fn temp_build(input_html: &str) -> (PathBuf, template::Result<Build>) {
+        let input_path = write_input_file(input_html);
+        let output_path = unique_path("htms_test_output", "html");
+        let build = parse_and_build(&input_path, &output_path);
+
+        (output_path, build)
+    }
+
+    fn temp_build_with_rendered(input_html: &str) -> (Build, String) {
+        let (output_path, build) = temp_build(input_html);
+        let rendered = read_output_string(&output_path);
+
+        (build.expect("temp_build"), rendered)
+    }
+
+    #[test]
+    fn without_html_tag_does_not_inject_style_and_script() {
+        let (build, rendered) = temp_build_with_rendered("<p>Content</p>");
+
+        assert!(!build.has_html_tag());
+        assert!(!rendered.contains("<style>"));
+        assert!(!rendered.contains("<script>"));
+        assert!(rendered.contains("<p>Content</p>"));
+    }
+
+    #[test]
+    fn with_html_tag_injects_style_and_script_and_removes_end_tags() {
+        let (build, rendered) = temp_build_with_rendered(
+            r"<!doctype html><html><head></head><body>
+            <p>Content</p>
+            </body></html>",
+        );
+
+        assert!(build.has_html_tag());
+        assert!(rendered.contains(format!("<style>{STATIC_STYLE_CSS}</style>").as_str()));
+        assert!(rendered.contains(format!("<script>{STATIC_ON_RESPONSE_JS}</script>").as_str()));
+        assert!(!rendered.contains("</body>"));
+        assert!(!rendered.contains("</html>"));
+    }
+
+    #[test]
+    fn collects_task_names_and_normalizes_attribute() {
+        let (build, rendered) = temp_build_with_rendered(
+            r#"<!doctype html><html><head></head><body>
+            <div data-htms="fn:news"></div><div data-htms="fn:blog_posts"></div>
+            </body></html>"#,
+        );
+        let task_names = build.task_names();
+
+        assert!(task_names.contains("news"));
+        assert!(task_names.contains("blog_posts"));
+        assert!(rendered.contains(r#"data-htms="news""#));
+        assert!(rendered.contains(r#"data-htms="blog_posts""#));
+        assert!(!rendered.contains(r#"data-htms="fn:news""#));
+        assert!(!rendered.contains(r#"data-htms="fn:blog_posts""#));
+    }
+
+    #[test]
+    fn fails_on_invalid_htms_attribute() {
+        let (_, build) = temp_build(
+            r#"<!doctype html><html><head></head><body>
+            <div data-htms="fn:invalid-name"></div>
+            </body></html>"#,
+        );
+        let is_error = build.is_err();
+        let message = build.unwrap_err().to_string();
+
+        assert!(is_error);
+        assert!(message.contains("failed to rewrite input chunk: "));
+        assert!(message.contains("invalid attribute 'div[data-htms]' at byte offset 53"));
+    }
+
+    #[test]
+    fn fails_on_input_file_not_found() {
+        let input_path = unique_path("htms_test_input", "html");
+        let output_path = unique_path("htms_test_output", "html");
+        let build = parse_and_build(&input_path, &output_path);
+
+        let is_error = build.is_err();
+        let message = build.unwrap_err().to_string();
+
+        assert!(is_error);
+        assert!(message.contains("failed to open input path: "));
+    }
+}
