@@ -23,3 +23,7 @@ futures-util.workspace = true
 lol_html.workspace = true
 syn = { workspace = true, features = ["full"] }
 thiserror.workspace = true
+
+[dev-dependencies]
+http.workspace = true
+tokio = { workspace = true, features = ["full"] }

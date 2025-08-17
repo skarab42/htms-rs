@@ -391,9 +391,11 @@ dependencies = [
  "bytes",
  "futures-core",
  "futures-util",
+ "http",
  "lol_html",
  "syn",
  "thiserror",
+ "tokio",
 ]
 
 [[package]]
