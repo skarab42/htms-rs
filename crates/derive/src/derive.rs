@@ -23,7 +23,7 @@ impl Error {
             Self::Syn(err) => err.to_compile_error().into(),
             Self::Darling(err) => err.write_errors().into(),
             Self::Var(error) => {
-                let message = format!("{error}");
+                let message = format!("[htms] {error}");
                 quote!(compile_error!(#message)).into()
             },
         }

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head data-htms="include:head.html">
+    <title>This will be statically replaced by the contents of `head.html`</title>
+</head>
+<body>
+<header>
+    <h1>Hello World</h1>
+</header>
+<section data-htms="include:news.html">
+    <p>This will be statically replaced by the contents of `news.html`</p>
+</section>
+<section>
+    <div>Some static contents before blog posts with loading placeholder.</div>
+    <div data-htms="fn:blog_posts">
+        <p>With some blog posts loading placeholder...</p>
+    </div>
+    <div>Some static contents after blog posts with loading placeholder.</div>
+</section>
+<footer>Copyright 2025</footer>
+</body>
+</html>
