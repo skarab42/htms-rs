@@ -1,17 +1,20 @@
 # HTMS 💨 Streaming HTML Without The Headaches
 
-> **"What if progressive loading didn't require rewriting your entire frontend?"**
+> **"What if async content was actually SEO-friendly?"**
+>
+> *(HTML streaming: ancient wisdom, modern awakening, progressive enhancement™.)*
+
 
 HTMS solves the classic web development dilemma: you want instant page loads AND progressive content updates, but every
 solution forces you to choose between SEO-friendly server rendering or complex client-side applications.
 
 **HTMS gives you both.** Stream HTML progressively with perfect SEO, lightning-fast first paint, and just a few lines of
-JavaScript that disappear once the content is ready.
+JavaScript that clean up their own mess once the stream finishes.
 
 [![Rust](https://img.shields.io/badge/rust-000000.svg?&style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
 [![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
 [![Streaming](https://img.shields.io/badge/streaming-💨-blue?style=for-the-badge)](https://github.com/skarab42/htms)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](license.md)
 
 ---
 

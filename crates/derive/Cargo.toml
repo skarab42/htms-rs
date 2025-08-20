@@ -1,6 +1,6 @@
 [package]
 name = "htms_derive"
-description = "An experiment about HTM streaming"
+description = "Procedural macros for HTMS - Auto-magical code generation that transforms your HTML attributes into streaming superpowers"
 readme = "./readme.md"
 version = "0.1.0"
 edition = "2024"

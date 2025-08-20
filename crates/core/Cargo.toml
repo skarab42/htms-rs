@@ -1,6 +1,6 @@
 [package]
 name = "htms_core"
-description = "An experiment about HTM streaming"
+description = "Core streaming HTML engine - The foundational magic behind progressive content loading without the complexity"
 readme = "./readme.md"
 version = "0.1.0"
 edition = "2024"

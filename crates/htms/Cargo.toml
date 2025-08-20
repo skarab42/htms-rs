@@ -1,6 +1,6 @@
 [package]
 name = "htms"
-description = "An experiment about HTM streaming"
+description = "Progressive HTML streaming made simple - Write normal HTML and Rust, get lightning-fast progressive loading for free"
 readme = "./readme.md"
 version = "0.1.0"
 edition = "2024"

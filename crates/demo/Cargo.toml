@@ -1,6 +1,6 @@
 [package]
 name = "htms_demo"
-description = "An experiment about HTM streaming"
+description = "Live examples and experimental playground - See HTMS in action with real-world scenarios and bleeding-edge experiments"
 readme = "./readme.md"
 version = "0.1.0"
 edition = "2024"
