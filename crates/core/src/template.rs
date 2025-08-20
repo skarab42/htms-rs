@@ -5,6 +5,7 @@ use std::{
     io::{self, Read, Write},
     path::{Path, PathBuf},
     result,
+    sync::mpsc,
 };
 
 use lol_html::{
@@ -28,6 +29,10 @@ pub enum Error {
     CreateOutputFile(PathBuf, #[source] io::Error),
     #[error("failed to read input chunk: {0}: {1}")]
     ReadInputChunk(PathBuf, #[source] io::Error),
+    #[error("failed to write output chunk: {0}: {1}")]
+    WriteOutputChunk(PathBuf, #[source] RewritingError),
+    #[error("failed to write output file chunk: {0}: {1}")]
+    WriteOutputFileChunk(PathBuf, #[source] io::Error),
     #[error("failed to rewrite the template: {1}")]
     RewriteTemplate(PathBuf, #[source] RewritingError),
     #[error("failed to close rewriter: {0}: {1}")]
@@ -94,20 +99,27 @@ pub fn parse_and_build<I: AsRef<Path>, A: AsRef<Path>>(
         .map_err(|error| Error::CreateOutputFile(output_path.into(), error))?;
 
     let mut build = Build::default();
+    let (error_tx, error_rx) = mpsc::channel();
 
     {
         let dynamic_rewriter_sink = |c: &[u8]| {
-            // TODO: handle errors?
-            #[allow(clippy::expect_used)]
-            output_file.write_all(c).expect("write chunk to file");
+            if let Err(error) = output_file.write_all(c) {
+                #[allow(clippy::expect_used)]
+                error_tx
+                    .send(Error::WriteOutputFileChunk(output_path.into(), error))
+                    .expect("send dynamic sink error");
+            }
         };
 
         let mut dynamic_rewriter = make_dynamic_rewriter(&mut build, dynamic_rewriter_sink);
 
         let static_rewriter_sink = |c: &[u8]| {
-            // TODO: handle errors?
-            #[allow(clippy::expect_used)]
-            dynamic_rewriter.write(c).expect("write chunk to file");
+            if let Err(error) = dynamic_rewriter.write(c) {
+                #[allow(clippy::expect_used)]
+                error_tx
+                    .send(Error::WriteOutputChunk(output_path.into(), error))
+                    .expect("send static sink error");
+            }
         };
 
         let mut static_rewriter = make_static_rewriter(input_path, static_rewriter_sink);
@@ -115,6 +127,10 @@ pub fn parse_and_build<I: AsRef<Path>, A: AsRef<Path>>(
         let mut chuck_buffer = [0u8; CHUCK_BUFFER_SIZE];
 
         loop {
+            if let Ok(error) = error_rx.try_recv() {
+                return Err(error);
+            }
+
             let bytes_read = input_file
                 .read(&mut chuck_buffer)
                 .map_err(|error| Error::ReadInputChunk(input_path.into(), error))?;
@@ -373,7 +389,7 @@ mod parse_and_build {
         let message = build.unwrap_err().to_string();
 
         assert!(is_error);
-        assert!(message.contains("failed to rewrite input chunk: "));
+        assert!(message.contains("failed to write output chunk: "));
         assert!(message.contains("invalid attribute 'div[data-htms]' at byte offset 53"));
     }
 
