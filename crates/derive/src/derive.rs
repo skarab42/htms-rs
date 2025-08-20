@@ -92,24 +92,24 @@ pub fn template(input: &DeriveInput) -> Result<TokenStream> {
     };
 
     let final_chunk_body = if build.has_html_tag() {
-        quote! { Some(::htms_core::Bytes::from_static(b"</body></html>")) }
+        quote! { Some(::htms::Bytes::from_static(b"</body></html>")) }
     } else {
         quote! { None }
     };
 
     let render_impl = quote! {
-         use ::htms_core::Render;
+         use ::htms::Render;
 
-         impl #impl_generics ::htms_core::Render for #input_struct_ident #ty_generics #where_clause {
-            fn tasks(self) -> Option<Vec<::htms_core::Task>> {
-                Some(vec![#(::htms_core::Task::new(#task_names, Self::#method_idents(#context_field)),)*])
+         impl #impl_generics ::htms::Render for #input_struct_ident #ty_generics #where_clause {
+            fn tasks(self) -> Option<Vec<::htms::Task>> {
+                Some(vec![#(::htms::Task::new(#task_names, Self::#method_idents(#context_field)),)*])
             }
 
-            fn template() -> ::htms_core::Bytes {
-                ::htms_core::Bytes::from_static(include_bytes!(#template_path_output_lit))
+            fn template() -> ::htms::Bytes {
+                ::htms::Bytes::from_static(include_bytes!(#template_path_output_lit))
             }
 
-            fn final_chunk() -> Option<::htms_core::Bytes> {
+            fn final_chunk() -> Option<::htms::Bytes> {
                 #final_chunk_body
             }
         }

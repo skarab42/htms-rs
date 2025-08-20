@@ -9,7 +9,7 @@ use axum::{
 };
 use color_eyre::eyre::Result;
 use futures_util::StreamExt;
-use htms_core::{Bytes, Render, axum::HtmlStream};
+use htms::{Bytes, Render, axum::HtmlStream};
 use tokio::net;
 
 use crate::{index::AxumWithStateExample, state::AppState};

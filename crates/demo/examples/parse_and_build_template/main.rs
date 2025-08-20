@@ -1,5 +1,5 @@
 use color_eyre::Result;
-use htms_core::template;
+use htms::template;
 
 fn main() -> Result<()> {
     color_eyre::install()?;

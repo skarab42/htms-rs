@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use htms_derive::Template;
+use htms::Template;
 use tokio::time::sleep;
 
 use crate::state::AppState;

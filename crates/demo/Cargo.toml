@@ -15,6 +15,5 @@ exclude = [".htms/**"]
 axum.workspace = true
 color-eyre.workspace = true
 futures-util.workspace = true
-htms_core = { workspace = true, features = ["axum"] }
-htms_derive.workspace = true
+htms = { workspace = true, features = ["axum"] }
 tokio = { workspace = true, features = ["full"] }

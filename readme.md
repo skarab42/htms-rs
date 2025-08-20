@@ -32,7 +32,7 @@ Write normal HTML with `data-htms` attributes:
 Write normal Rust async functions:
 
 ```rust
-use htms_derive::Template;
+use htms::Template;
 
 #[derive(Template)]
 #[template = "page.html"]
@@ -56,7 +56,7 @@ Stream it all in one request with your favorite backend, here with [Axum](https:
 adapter:
 
 ```rust
-use htms_core::axum::HtmlStream;
+use htms::axum::HtmlStream;
 
 async fn home_page_handler() -> Response {
     let stream = HomePage::default().render().map(Ok::<Bytes, Infallible>);

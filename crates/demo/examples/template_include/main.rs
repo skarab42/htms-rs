@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use futures_util::StreamExt;
-use htms_derive::Template;
+use htms::Template;
 use tokio::{
     io::{AsyncWriteExt, stdout},
     time::sleep,
