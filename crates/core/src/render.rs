@@ -14,11 +14,7 @@ pub trait Render: Sized {
 
     #[must_use]
     fn response(id: &str, html: &str) -> Bytes {
-        format!(
-            r#"<script data-htms="{id}">onHtmsResponse("{id}", "{html}")</script>{}"#,
-            "\n"
-        )
-        .into()
+        format!(r#"<htms-chunk target="{id}">{html}</htms-chunk>{}"#, "\n").into()
     }
 
     #[must_use]
@@ -189,7 +185,7 @@ mod render_template_with_tasks {
     async fn response_returns_expected_format() {
         let bytes = TemplateWithFinalChunk::response("identifier", "<h1>html payload</h1>");
         let expected = Bytes::from_static(
-            br#"<script data-htms="identifier">onHtmsResponse("identifier", "<h1>html payload</h1>")</script>
+            br#"<htms-chunk target="identifier"><h1>html payload</h1></htms-chunk>
 "#,
         );
 

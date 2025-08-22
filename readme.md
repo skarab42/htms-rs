@@ -81,19 +81,14 @@ cargo run -p demo --example axum
 The secret is **streaming everything in one HTTP request**:
 
 1. **Instant delivery**: Static HTML streams immediately to the browser
-2. **Progressive enhancement**: Async content arrives as tags in the same stream
-3. **Seamless replacement**: four lines of JavaScript swap placeholders with real content
-4. **Perfect SEO**: All content (even async parts) is in the HTML source
+2. **Progressive enhancement**: Async content arrives as static HTML inside a WebComponent (aka `<htms-chunk>`) in the
+   same stream
+3. **Seamless replacement**:`<htms-chunk>` as only a [few lines](crates/core/src/static/htms_chunk.js) of JavaScript
+   that swap placeholders with
+   real content when added to the DOM
+4. **Perfect SEO**: All content (even async-generated fragments) is in the body of the initial HTTP response
 
-``` javascript
-// This is literally all the JavaScript
-function onHtmsResponse(id, html) {
-    document.querySelector(`script[data-htms="${id}"]`).remove();
-    document.querySelector(`[data-htms="${id}"]`).outerHTML = html;
-}
-```
-
-**No hydration. No client-side routing. No complex state management.** Just HTML that fills itself in.
+**No hydration, No heavy DOM manipulation.** Just HTML that fills itself in.
 
 ## 😉 The "Trust Me Bro" Comparison Chart
 
@@ -111,7 +106,9 @@ function onHtmsResponse(id, html) {
 
 This project started as "hold up, HTML streaming has been a thing since the late 90s, and nobody talks about it?! Time
 to
-experiment" and spiraled into a full-blown rabbit hole of Rust learning and web development philosophy.
+experiment" and spiraled into a full-blown rabbit hole of Rust learning and web development philosophy. The starting
+point of this journey was [this
+article](https://frontendmasters.com/blog/streaming-html/) by Chris Coyier.
 
 ### 🎯 What This Really Is:
 

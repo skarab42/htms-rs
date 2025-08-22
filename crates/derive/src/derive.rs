@@ -92,7 +92,7 @@ pub fn template(input: &DeriveInput) -> Result<TokenStream> {
     };
 
     let final_chunk_body = if build.has_html_tag() {
-        quote! { Some(::htms::Bytes::from_static(b"</body></html>")) }
+        quote! { Some(::htms::Bytes::from_static(br#"<script class="htms-dirty">htmsCleanup();</script></body></html>"#)) }
     } else {
         quote! { None }
     };

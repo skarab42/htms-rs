@@ -17,7 +17,7 @@ use syn::{Ident, parse_str};
 
 static CHUCK_BUFFER_SIZE: usize = 16 * 1024;
 static STATIC_STYLE_CSS: &str = include_str!("static/style.css");
-static STATIC_ON_RESPONSE_JS: &str = include_str!("static/on_response.js");
+static STATIC_HTMS_CHUNK_JS: &str = include_str!("static/htms_chunk.js");
 
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
@@ -171,8 +171,8 @@ fn make_dynamic_rewriter<O: OutputSink>(
                     Ok(())
                 }),
                 element!("body", |el: &mut Element| {
-                    el.append("<script>", ContentType::Html);
-                    el.append(STATIC_ON_RESPONSE_JS, ContentType::Html);
+                    el.append(r#"<script class="htms-dirty">"#, ContentType::Html);
+                    el.append(STATIC_HTMS_CHUNK_JS, ContentType::Html);
                     el.append("</script>", ContentType::Html);
 
                     if let Some(handlers) = el.end_tag_handlers() {
@@ -184,7 +184,7 @@ fn make_dynamic_rewriter<O: OutputSink>(
                     Ok(())
                 }),
                 element!("html>head", |el| {
-                    el.append("<style>", ContentType::Html);
+                    el.append(r#"<style class="htms-dirty">"#, ContentType::Html);
                     el.append(STATIC_STYLE_CSS, ContentType::Html);
                     el.append("</style>", ContentType::Html);
 
@@ -255,7 +255,7 @@ mod parse_and_build {
         time::{SystemTime, UNIX_EPOCH},
     };
 
-    use super::{Build, STATIC_ON_RESPONSE_JS, STATIC_STYLE_CSS, parse_and_build};
+    use super::{Build, STATIC_HTMS_CHUNK_JS, STATIC_STYLE_CSS, parse_and_build};
     use crate::template;
 
     fn unique_path(prefix: &str, extension: &str) -> PathBuf {
@@ -320,8 +320,14 @@ mod parse_and_build {
         );
 
         assert!(build.has_html_tag());
-        assert!(rendered.contains(format!("<style>{STATIC_STYLE_CSS}</style>").as_str()));
-        assert!(rendered.contains(format!("<script>{STATIC_ON_RESPONSE_JS}</script>").as_str()));
+        assert!(
+            rendered.contains(
+                format!(r#"<style class="htms-dirty">{STATIC_STYLE_CSS}</style>"#).as_str()
+            )
+        );
+        assert!(rendered.contains(
+            format!(r#"<script class="htms-dirty">{STATIC_HTMS_CHUNK_JS}</script>"#).as_str()
+        ));
         assert!(!rendered.contains("</body>"));
         assert!(!rendered.contains("</html>"));
     }
