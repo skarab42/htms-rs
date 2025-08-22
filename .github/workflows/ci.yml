@@ -2,14 +2,12 @@ name: ci
 
 on:
     push:
-        branches:
-            - main
+        branches: [ main ]
     pull_request:
-        branches:
-            - '*'
+        branches: [ '*' ]
 
 concurrency:
-    group: ${{ github.workflow }}-${{ github.ref }}
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
     cancel-in-progress: true
 
 permissions:
@@ -27,8 +25,9 @@ jobs:
         steps:
             -   uses: actions/checkout@v4
 
-            -   uses: dtolnay/rust-toolchain@stable
+            -   uses: dtolnay/rust-toolchain@master
                 with:
+                    toolchain: nightly
                     components: clippy, rustfmt
 
             -   uses: Swatinem/rust-cache@v2
