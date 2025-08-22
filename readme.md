@@ -66,7 +66,7 @@ adapter:
 use htms::axum::HtmlStream;
 
 async fn home_page_handler() -> Response {
-    let stream = HomePage::default().render().map(Ok::<Bytes, Infallible>);
+    let stream = HomePage::default().render();
 
     HtmlStream::from(stream).into_response()
 }

@@ -1,10 +1,13 @@
+use std::convert::Infallible;
+
 use axum::{
     BoxError,
     body::{Body, Bytes},
     http::header::{CONTENT_TYPE, TRANSFER_ENCODING},
     response::{IntoResponse, Response},
 };
-use futures_core::TryStream;
+use futures_core::{Stream, TryStream};
+use futures_util::{StreamExt, stream::Map};
 
 pub struct HtmlStream<S>(pub S);
 
@@ -26,9 +29,22 @@ where
     }
 }
 
-impl<S> From<S> for HtmlStream<S> {
+impl<S, E> From<S> for HtmlStream<S>
+where
+    S: TryStream<Ok = Bytes, Error = E> + Send + 'static,
+    E: Into<BoxError> + 'static,
+{
     fn from(inner: S) -> Self {
         Self(inner)
+    }
+}
+
+impl<S> From<S> for HtmlStream<Map<S, fn(Bytes) -> Result<Bytes, Infallible>>>
+where
+    S: Stream<Item = Bytes> + Send + 'static,
+{
+    fn from(stream: S) -> Self {
+        Self(stream.map(Ok::<Bytes, Infallible>))
     }
 }
 
@@ -91,5 +107,16 @@ mod tests {
         let bytes = to_bytes(body, usize::MAX).await.expect("to_bytes failed");
 
         assert_eq!(&bytes[..], b"Hello World!");
+    }
+
+    #[tokio::test]
+    async fn from_plain_stream_bytes() {
+        let stream = stream::iter([Bytes::from_static(b"Hello"), Bytes::from_static(b"World")]);
+        let html_stream = HtmlStream::from(stream).into_response();
+        let response = html_stream.into_response();
+        let body = response.into_body();
+        let bytes = to_bytes(body, usize::MAX).await.expect("to_bytes failed");
+
+        assert_eq!(&bytes[..], b"HelloWorld");
     }
 }

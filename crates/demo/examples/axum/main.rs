@@ -1,5 +1,3 @@
-use std::convert::Infallible;
-
 use axum::{
     Router,
     response::{IntoResponse, Response},
@@ -7,8 +5,7 @@ use axum::{
     serve,
 };
 use color_eyre::eyre::Result;
-use futures_util::StreamExt;
-use htms::{Bytes, Render, axum::HtmlStream};
+use htms::{Render, axum::HtmlStream};
 use tokio::net;
 
 use crate::index::AxumExample;
@@ -17,7 +14,7 @@ use crate::index::AxumExample;
 mod index;
 
 async fn handler() -> Response {
-    let stream = AxumExample::default().render().map(Ok::<Bytes, Infallible>);
+    let stream = AxumExample::default().render();
 
     HtmlStream::from(stream).into_response()
 }
