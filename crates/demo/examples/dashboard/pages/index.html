@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HTMS Dashboard - Streaming Demo</title>
+    <style data-htms="include:style.html"></style>
+</head>
+<body>
+<header class="header">
+    <h1>🚀 HTMS Dashboard</h1>
+    <p>Stream Async HTML, Stay SEO-Friendly</p>
+</header>
+
+<div class="grid">
+    <!-- STATIC: Instant load -->
+    <div class="card static">
+        <div class="status instant">INSTANT</div>
+        <div class="metric">⚡</div>
+        <h3>Server Status</h3>
+        <p class="label">Always available</p>
+        <p>This loads instantly because it's static HTML!</p>
+    </div>
+
+    <!-- DYNAMIC: Fast (800ms) -->
+    <div class="card loading" data-htms="fn:user_stats">
+        <div class="loading-bar"></div>
+        <div class="status streaming">STREAMING</div>
+        <div class="metric">⏳</div>
+        <h3>User Stats</h3>
+        <p class="label">Loading...</p>
+    </div>
+
+    <!-- STATIC: Another instant -->
+    <div class="card static">
+        <div class="status instant">INSTANT</div>
+        <div class="metric">💚</div>
+        <h3>System Health</h3>
+        <p class="label">All systems go</p>
+        <p>Static content = instant visibility!</p>
+    </div>
+
+    <!-- DYNAMIC: Medium (1.5s) -->
+    <div class="card loading" data-htms="fn:sales_data">
+        <div class="loading-bar"></div>
+        <div class="status streaming">STREAMING</div>
+        <div class="metric">📊</div>
+        <h3>Sales Data</h3>
+        <p class="label">Calculating...</p>
+    </div>
+
+    <!-- DYNAMIC: Slow (2.5s) -->
+    <div class="card loading" data-htms="fn:analytics">
+        <div class="loading-bar"></div>
+        <div class="status streaming">STREAMING</div>
+        <div class="metric">🔍</div>
+        <h3>Analytics</h3>
+        <p class="label">Processing...</p>
+    </div>
+
+    <!-- STATIC: Last instant -->
+    <div class="card static">
+        <div class="status instant">INSTANT</div>
+        <div class="metric">🛡️</div>
+        <h3>Security</h3>
+        <p class="label">Protected</p>
+        <p>Navigation & forms work immediately!</p>
+    </div>
+</div>
+
+<footer class="footer">
+    <p>✨ <strong>3 cards load instantly</strong> • <strong>3 cards stream progressively</strong> • <strong>Perfect
+        SEO</strong> ✨</p>
+    <p><small>HTML streaming: ancient tech, modern solutions</small></p>
+</footer>
+</body>
+</html>
