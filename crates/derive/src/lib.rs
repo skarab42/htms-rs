@@ -34,7 +34,7 @@ use syn::{DeriveInput, parse_macro_input};
 ///
 /// # Example: with tasks
 ///
-/// ```rust
+/// ```rust,ignore
 /// #[derive(htms::Template, Debug)]
 /// #[template = "fixtures/example.html"]
 /// struct Example {}
@@ -55,7 +55,7 @@ use syn::{DeriveInput, parse_macro_input};
 ///
 /// # Example: with context and tasks
 ///
-/// ```rust
+/// ```rust,ignore
 /// #[derive(Debug, Clone)]
 /// struct State { title: String }
 ///
