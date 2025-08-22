@@ -3,7 +3,7 @@ resolver = "2"
 members = ["crates/*"]
 
 [workspace.package]
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 license = "MIT"
 rust-version = "1.88"
@@ -26,9 +26,9 @@ syn = "2"
 thiserror = "2"
 tokio = "1"
 
-htms = { path = "crates/htms", version = "0.1.0" }
-htms_core = { path = "crates/core", version = "0.1.0" }
-htms_derive = { path = "crates/derive", version = "0.1.0" }
+htms = { path = "crates/htms", version = "0.1.1" }
+htms_core = { path = "crates/core", version = "0.1.1" }
+htms_derive = { path = "crates/derive", version = "0.1.1" }
 
 [profile.dev]
 debug = 2
