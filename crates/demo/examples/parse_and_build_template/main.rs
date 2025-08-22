@@ -5,8 +5,8 @@ fn main() -> Result<()> {
     color_eyre::install()?;
 
     template::parse_and_build(
-        "crates/demo/examples/parse_and_build_template/index.input.html",
-        "crates/demo/examples/parse_and_build_template/index.output.html",
+        "crates/demo/examples/parse_and_build_template/index.html",
+        "crates/demo/.htms/build/examples/parse_and_build_template/index.html",
     )?;
 
     Ok(())
