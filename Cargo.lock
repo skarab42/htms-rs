@@ -384,7 +384,7 @@ dependencies = [
 
 [[package]]
 name = "htms"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "htms_core",
  "htms_derive",
@@ -392,7 +392,7 @@ dependencies = [
 
 [[package]]
 name = "htms_core"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "async-stream",
  "axum",
@@ -408,7 +408,7 @@ dependencies = [
 
 [[package]]
 name = "htms_demo"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "axum",
  "color-eyre",
@@ -419,7 +419,7 @@ dependencies = [
 
 [[package]]
 name = "htms_derive"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "darling",
  "htms_core",

@@ -1,7 +1,7 @@
 [package]
 name = "htms_derive"
 description = "Procedural macros for HTMS - Auto-magical code generation that transforms your HTML attributes into streaming superpowers"
-repository = "https://github.com/skarab42/htms/crates/derive"
+repository = "https://github.com/skarab42/htms"
 readme = "./readme.md"
 version.workspace = true
 edition.workspace = true
