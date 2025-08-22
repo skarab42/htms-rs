@@ -26,9 +26,9 @@ syn = "2"
 thiserror = "2"
 tokio = "1"
 
-htms = { path = "crates/htms" }
-htms_core = { path = "crates/core" }
-htms_derive = { path = "crates/derive" }
+htms = { path = "crates/htms", version = "0.1.0" }
+htms_core = { path = "crates/core", version = "0.1.0" }
+htms_derive = { path = "crates/derive", version = "0.1.0" }
 
 [profile.dev]
 debug = 2
