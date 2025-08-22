@@ -2,6 +2,14 @@
 resolver = "2"
 members = ["crates/*"]
 
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+rust-version = "1.88"
+keywords = ["html", "streaming", "async", "template", "seo"]
+categories = ["web-programming", "template-engine", "asynchronous"]
+
 [workspace.dependencies]
 async-stream = "0"
 axum = "0"

@@ -1,15 +1,15 @@
 [package]
 name = "htms_demo"
 description = "Live examples and experimental playground - See HTMS in action with real-world scenarios and bleeding-edge experiments"
-readme = "./readme.md"
-version = "0.1.0"
-edition = "2024"
-license = "MIT"
 repository = "https://github.com/skarab42/htms/crates/demo"
-categories = ["template-engine"]
-keywords = ["html", "stream"]
-rust-version = "1.88"
-exclude = [".htms/**"]
+readme = "./readme.md"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+categories.workspace = true
+keywords.workspace = true
+publish = false
 
 [dependencies]
 axum.workspace = true

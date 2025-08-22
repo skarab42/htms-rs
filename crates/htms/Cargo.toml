@@ -1,14 +1,14 @@
 [package]
 name = "htms"
 description = "Stream Async HTML, Stay SEO-Friendly"
-readme = "./readme.md"
-version = "0.1.0"
-edition = "2024"
-license = "MIT"
 repository = "https://github.com/skarab42/htms/crates/htms"
-categories = ["template-engine"]
-keywords = ["html", "stream"]
-rust-version = "1.88"
+readme = "./readme.md"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+categories.workspace = true
+keywords.workspace = true
 
 [features]
 default = []
