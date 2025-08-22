@@ -1,0 +1,140 @@
+<style>
+    body {
+        font-family: system-ui;
+        background: #1a1a1a;
+        color: white;
+        padding: 0;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .card {
+        background: #2a2a2a;
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 2px solid #333;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card h3 {
+        margin: 0;
+    }
+
+    .card.static {
+        border-color: #22c55e;
+        background: linear-gradient(135deg, #2a2a2a 0%, #1a4a2e 100%);
+    }
+
+    .card.loading {
+        border-color: #f59e0b;
+    }
+
+    .card.complete {
+        border-color: #3b82f6;
+        background: linear-gradient(135deg, #2a2a2a 0%, #1e3a5f 100%);
+        animation: slideIn 0.5s ease-out;
+    }
+
+    .loading-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #f59e0b, #ef4444, #f59e0b);
+        background-size: 200% 100%;
+        animation: loadingBar 1.5s infinite;
+        width: 100%;
+    }
+
+    @keyframes loadingBar {
+        0% {
+            background-position: 200% 0;
+        }
+        100% {
+            background-position: -200% 0;
+        }
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .metric {
+        font-size: 3rem;
+        font-weight: bold;
+        margin: 0.5rem 0;
+    }
+
+    .label {
+        color: #888;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .status {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+
+    .status.instant {
+        background: #22c55e;
+        color: white;
+    }
+
+    .status.streaming {
+        background: #f59e0b;
+        color: white;
+        animation: pulse 1s infinite;
+    }
+
+    .status.ready {
+        background: #3b82f6;
+        color: white;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.7;
+        }
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 2rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>

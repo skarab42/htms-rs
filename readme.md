@@ -75,8 +75,10 @@ async fn home_page_handler() -> Response {
 **Result:** Your page appears instantly with static content, then sections fill in progressively as async tasks
 complete. All content is SEO-visible in the initial HTTP response.
 
+![](images/htms-dashboard-demo.gif "htms dashboard demo")
+
 ```bash
-cargo run -p demo --example axum
+cargo run -p demo --example dashboard
 # Visit http://localhost:3000 and watch the magic
 ```
 
