@@ -1,3 +1,8 @@
+//! Template builder for **htms**.
+//!
+//! Parses HTML templates, applies transformations, and writes the result.
+//! This module powers the build-time pipeline used to prepare streamable templates.
+
 use std::{
     collections::BTreeSet,
     fs,
@@ -78,8 +83,38 @@ impl Build {
     }
 }
 
-// TODO: add documentation
-#[allow(clippy::missing_errors_doc, clippy::missing_panics_doc)]
+/// Parse an input HTML file and build the rewritten output.
+///
+/// This function reads an HTML file, applies **htms** transformations
+/// (inject style/script, handle `data-htms` attributes, include fragments),
+/// and writes the resulting HTML to the given output path.
+/// It also collects metadata into a [`Build`] structure.
+///
+/// # Errors
+/// Returns an [`Error`] if:
+/// - the input file cannot be read,
+/// - the output directory/file cannot be created or written,
+/// - the HTML rewriting fails (invalid attribute or include),
+/// - flushing the output file fails.
+///
+/// # Panics
+/// If the internal error channel fails to deliver, which should never occur under normal conditions.
+///
+/// # Example
+/// ```no_run
+/// use htms_core::template::{parse_and_build, Build, Result};
+/// use std::path::Path;
+///
+/// fn main() -> Result<()> {
+///     let input = Path::new("./index.html");
+///     let output = Path::new("./index.out.html");
+///     let build: Build = parse_and_build(input, output)?;
+///
+///     println!("Has <html> tag? {}", build.has_html_tag());
+///
+///     Ok(())
+/// }
+/// ```
 pub fn parse_and_build<I: AsRef<Path>, A: AsRef<Path>>(
     input_path: I,
     output_path: A,

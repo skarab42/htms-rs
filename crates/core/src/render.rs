@@ -1,3 +1,68 @@
+//! Rendering system for **htms**.
+//!
+//! Provides the [`Render`] trait, which defines how to generate an initial template
+//! plus optional asynchronous [`Task`]s producing dynamic HTML chunks.
+//!
+//! # Example: stream to stdout
+//! ```rust
+//! use htms_core::render::Render;
+//! use bytes::Bytes;
+//! use futures_util::StreamExt;
+//!
+//! #[derive(Default)]
+//! struct Page {}
+//!
+//! impl Render for Page {
+//!     fn template() -> Bytes {
+//!         "<h1>Hello</h1>".into()
+//!     }
+//! }
+//!
+//! #[tokio::main]
+//! async fn main() {
+//!     let page = Page::default();
+//!     let mut stream = Box::pin(page.render());
+//!
+//!     while let Some(bytes) = stream.next().await {
+//!         print!("{}", String::from_utf8_lossy(&bytes));
+//!     }
+//! }
+//! ```
+//!
+//! # Example: with tasks
+//! ```rust
+//! use bytes::Bytes;
+//! use futures_util::StreamExt;
+//! use htms_core::{render::Render, task::Task};
+//! use std::future;
+//!
+//! #[derive(Default)]
+//! struct Page {}
+//!
+//! impl Render for Page {
+//!     fn template() -> Bytes {
+//!         "<h1>Users</h1>".into()
+//!     }
+//!
+//!     fn tasks(self) -> Option<Vec<Task>> {
+//!         Some(vec![
+//!             Task::new("u1", future::ready("<p>Alice</p>".to_string())),
+//!             Task::new("u2", future::ready("<p>Bob</p>".to_string())),
+//!         ])
+//!     }
+//! }
+//!
+//! #[tokio::main]
+//! async fn main() {
+//!     let page = Page::default();
+//!     let mut stream = Box::pin(page.render());
+//!
+//!     while let Some(bytes) = stream.next().await {
+//!         print!("{}", String::from_utf8_lossy(&bytes));
+//!     }
+//! }
+//! ```
+
 use async_stream::stream;
 use bytes::Bytes;
 use futures_core::Stream;
@@ -5,23 +70,35 @@ use futures_util::{FutureExt, StreamExt, stream::FuturesUnordered};
 
 use crate::task::Task;
 
+/// Trait defining rendering logic.
+///
+/// A type implementing [`Render`] produces an initial template,
+/// optional async [`Task`]s, and a final chunk if needed.
 pub trait Render: Sized {
+    /// Return the static HTML template for this renderer.
     fn template() -> Bytes;
 
+    /// Return the list of tasks associated with this renderer.
+    ///
+    /// Defaults to `None`.
     fn tasks(self) -> Option<Vec<Task>> {
         None
     }
 
+    /// Build a `<htms-chunk>` wrapper from an ID and HTML fragment.
     #[must_use]
     fn response(id: &str, html: &str) -> Bytes {
         format!(r#"<htms-chunk target="{id}">{html}</htms-chunk>{}"#, "\n").into()
     }
 
+    /// Optionally, return a final chunk to yield after all tasks complete.
+    /// Mainly used for cleaning htms dirty tags and close the body/html tags.
     #[must_use]
     fn final_chunk() -> Option<Bytes> {
         None
     }
 
+    /// Render the template plus task results as a stream of HTML chunks.
     #[must_use]
     fn render(self) -> impl Stream<Item = Bytes> {
         stream! {

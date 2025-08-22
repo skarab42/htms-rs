@@ -1,13 +1,39 @@
+//! Task system for **htms**.
+//!
+//! Defines a [`Task`] abstraction wrapping a future that produces a `String`.
+//! Useful for scheduling or executing asynchronous jobs identified by an ID.
+//!
+//! # Example
+//! ```rust
+//! use htms_core::task::{Task, TaskFuture};
+//! use std::future;
+//!
+//! let task = Task::new("hello", future::ready("world".to_string()));
+//! ```
+
 use futures_core::future::BoxFuture;
 
+/// Boxed future returning a `String`.
 pub type TaskFuture = BoxFuture<'static, String>;
 
+/// Represents an asynchronous task with an identifier and a future.
 pub struct Task {
+    /// Unique identifier of the task.
     pub id: String,
+    /// The asynchronous computation to be executed.
     pub future: TaskFuture,
 }
 
 impl Task {
+    /// Create a new [`Task`] from an identifier and a future.
+    ///
+    /// # Example
+    /// ```rust
+    /// use htms_core::task::Task;
+    /// use std::future;
+    ///
+    /// let task = Task::new("id", future::ready("done".to_string()));
+    /// ```
     pub fn new<I: Into<String>, F>(id: I, future: F) -> Self
     where
         F: Future<Output = String> + Send + 'static,

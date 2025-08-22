@@ -422,11 +422,13 @@ name = "htms_derive"
 version = "0.1.0"
 dependencies = [
  "darling",
+ "htms",
  "htms_core",
  "proc-macro2",
  "quote",
  "syn",
  "thiserror",
+ "tokio",
 ]
 
 [[package]]

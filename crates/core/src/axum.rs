@@ -1,3 +1,7 @@
+//! Adapter for integrating **htms** with [axum](https://github.com/tokio-rs/axum).
+//!
+//! This module provides [`HtmlStream`] which lets you stream HTML chunks into an Axum response.
+
 use std::convert::Infallible;
 
 use axum::{
@@ -9,6 +13,27 @@ use axum::{
 use futures_core::{Stream, TryStream};
 use futures_util::{StreamExt, stream::Map};
 
+/// Stream HTML chunks as an Axum response.
+///
+/// Wraps any [`Stream`] of [`Bytes`] into a valid chunked `text/html` response.
+///
+/// # Example
+/// ```rust
+/// use axum::{Router, response::{Response, IntoResponse}, routing::get};
+/// use futures_core::Stream;
+/// use futures_util::stream;
+/// use htms_core::{axum::HtmlStream, Bytes};
+///
+/// async fn handler() -> Response {
+///     let s = stream::iter(vec![Bytes::from("<h1>Hello</h1>")]);
+///
+///     HtmlStream::from(s).into_response()
+/// }
+///
+/// fn app() -> Router {
+///     Router::new().route("/", get(handler))
+/// }
+/// ```
 pub struct HtmlStream<S>(pub S);
 
 impl<S> IntoResponse for HtmlStream<S>

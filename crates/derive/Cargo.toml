@@ -20,3 +20,7 @@ proc-macro2.workspace = true
 quote.workspace = true
 syn = { workspace = true, features = ["full"] }
 thiserror.workspace = true
+
+[dev-dependencies]
+htms.workspace = true
+tokio = { workspace = true, features = ["time"] }
