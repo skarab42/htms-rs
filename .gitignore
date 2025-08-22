@@ -1,4 +1,6 @@
 /.idea
+/coverage
 /target
-.ignore
+
 .htms
+.ignore
