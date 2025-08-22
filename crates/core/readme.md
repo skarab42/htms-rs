@@ -8,4 +8,4 @@ This is the core engine of HTMS. For full documentation, examples, and the compl
 
 ---
 
-*Part of the HTMS ecosystem - streaming HTML without the headaches.*
+*Part of the HTMS ecosystem — Stream Async HTML, Stay SEO-Friendly.*

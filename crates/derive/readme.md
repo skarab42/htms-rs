@@ -8,4 +8,4 @@ This crate contains the procedural macros that power HTMS. For usage examples an
 
 ---
 
-*Part of the HTMS ecosystem - streaming HTML without the headaches.*
+*Part of the HTMS ecosystem — Stream Async HTML, Stay SEO-Friendly.*

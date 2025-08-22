@@ -1,6 +1,6 @@
 [package]
 name = "htms"
-description = "Progressive HTML streaming made simple - Write normal HTML and Rust, get lightning-fast progressive loading for free"
+description = "Stream Async HTML, Stay SEO-Friendly"
 readme = "./readme.md"
 version = "0.1.0"
 edition = "2024"

@@ -1,15 +1,17 @@
-# HTMS 💨 Streaming HTML Without The Headaches
+# HTMS 💨 Stream Async HTML, Stay SEO-Friendly
 
-> **"What if async content was actually SEO-friendly?"**
+> **"What if async content didn’t nuke your SEO?"**
 >
 > *(HTML streaming: ancient wisdom, modern awakening, progressive enhancement™.)*
 
 
-HTMS solves the classic web development dilemma: you want instant page loads AND progressive content updates, but every
-solution forces you to choose between SEO-friendly server rendering or complex client-side applications.
+HTMS is the absurdly simple answer to a dumbly persistent problem:
+you want async content that shows up progressively, and you want search engines to actually see it.
 
-**HTMS gives you both.** Stream HTML progressively with perfect SEO, lightning-fast first paint, and just a few lines of
-JavaScript that clean up their own mess once the stream finishes.
+**HTMS does both.** It streams HTML fragments as they’re ready, wraps them in tiny self-cleaning WebComponents, and
+makes
+sure the whole thing lands in the very first HTTP response. No hydration, no React-like ceremony, no SEO tax. Just async
+HTML that behaves like… HTML.
 
 [![Rust](https://img.shields.io/badge/rust-000000.svg?&style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
 [![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
@@ -22,6 +24,8 @@ JavaScript that clean up their own mess once the stream finishes.
 
 HTMS is primarily about **streaming HTML**. The core idea? Bind HTML `data-htms` attributes to auto-generated async
 methods that progressively replace content. Here's how it looks:
+
+HTMS is on [crates.io](https://crates.io/crates/htms) because, of course, it is.
 
 Write normal HTML with `data-htms` attributes:
 
@@ -78,27 +82,28 @@ cargo run -p demo --example axum
 
 ## 🧠 How It Actually Works
 
-The secret is **streaming everything in one HTTP request**:
+The “magic” isn’t magic at all — it’s just **one boring HTTP response, streamed in chunks**:
 
-1. **Instant delivery**: Static HTML streams immediately to the browser
-2. **Progressive enhancement**: Async content arrives as static HTML inside a WebComponent (aka `<htms-chunk>`) in the
-   same stream
-3. **Seamless replacement**:`<htms-chunk>` as only a [few lines](crates/core/src/static/htms_chunk.js) of JavaScript
-   that swap placeholders with
-   real content when added to the DOM
-4. **Perfect SEO**: All content (even async-generated fragments) is in the body of the initial HTTP response
+1. **Instant paint**: The browser gets real static HTML immediately, no waiting room.
+2. **Async chunks**: Slow stuff (APIs, DB crunching, AI hallucinations…) arrives later, wrapped in `<htms-chunk>` tags
+   inside the same stream.
+3. **Self-cleaning swap**: Each `<htms-chunk>` runs a [microscopic](crates/core/src/static/htms_chunk.js) JS snippet
+   that swaps the placeholder with the real thing, then yeets itself out of the DOM.
+4. **SEO jackpot**: Because it’s all part of the original response body, search engines see the full page — async
+   content included.
 
-**No hydration, No heavy DOM manipulation.** Just HTML that fills itself in.
+**No hydration. No virtual DOM.** Just HTML showing up as it’s ready, like the web has always pretended to work.
 
 ## 😉 The "Trust Me Bro" Comparison Chart
 
-|                         | HTMS       | Traditional SPA | SSR + Hydration |
-|-------------------------|------------|-----------------|-----------------|
-| **First Paint**         | 🟢 Instant | 🔴 Slow         | 🟢 Fast         |
-| **SEO**                 | 🟢 Perfect | 🔴 Complex      | 🟢 Great        |
-| **Progressive Loading** | 🟢 Native  | 🟢 Yes          | 🔴 No           |
-| **Complexity**          | 🟢 Simple  | 🔴 High         | 🔴 Very High    |
-| **JavaScript Required** | 🟢 4 lines | 🔴 Lots         | 🔴 Lots         |
+| Feature              | HTMS 💨                       | Traditional SPA         | SSR + Hydration               |
+|----------------------|-------------------------------|-------------------------|-------------------------------|
+| **First Paint**      | 🟢 Instant (real HTML)        | 🔴 Slow (JS boot)       | 🟢 Fast                       |
+| **SEO**              | 🟢 Perfect (all in response)  | 🔴 Needs hacks          | 🟢 Good but complex           |
+| **Progressive Load** | 🟢 Native streaming           | 🟢 Possible (XHR/fetch) | 🔴 Not really                 |
+| **Complexity**       | 🟢 Low (HTML)                 | 🔴 High (framework tax) | 🔴 Very high (double work)    |
+| **JS Required**      | 🟢 Minimal (self-cleaning WC) | 🔴 Heavy bundle         | 🔴 Heavy bundle               |
+| **Developer Vibes**  | 🟢 “Wait, that’s it?”         | 🔴 “Where’s my state?”  | 🔴 “Why am I hydrating HTML?” |
 
 ## ⚠️ The Fine Print (AKA Reality Check)
 
@@ -133,6 +138,4 @@ don't bet your startup on it just yet.
 
 ---
 
-*Disclaimer: Side effects may include uncontrollable urges to rewrite your entire frontend.*
-
-*Disclaimer 2: Readme written by human + AI. We're still debating who did the heavy lifting.* 🤖✍️
+*Disclaimer: Readme and docs written by human + AI. We're still debating who did the heavy lifting.* 🤖✍️

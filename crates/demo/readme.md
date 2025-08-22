@@ -17,4 +17,4 @@ Visit [http://localhost:3000](http://localhost:3000) and watch the magic ✨
 
 ---
 
-*Part of the HTMS ecosystem - streaming HTML without the headaches.*
+*Part of the HTMS ecosystem — Stream Async HTML, Stay SEO-Friendly.*
