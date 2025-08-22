@@ -127,6 +127,7 @@ pub trait Render: Sized {
 }
 
 #[cfg(test)]
+#[cfg_attr(coverage_nightly, coverage(off))]
 #[allow(clippy::expect_used)]
 mod render_template_only {
     use bytes::Bytes;
@@ -177,6 +178,7 @@ mod render_template_only {
 }
 
 #[cfg(test)]
+#[cfg_attr(coverage_nightly, coverage(off))]
 #[allow(clippy::expect_used)]
 mod render_template_with_tasks {
     use bytes::Bytes;

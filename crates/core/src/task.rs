@@ -46,6 +46,7 @@ impl Task {
 }
 
 #[cfg(test)]
+#[cfg_attr(coverage_nightly, coverage(off))]
 #[allow(clippy::expect_used, clippy::unused_async)]
 mod tests {
     use super::Task;

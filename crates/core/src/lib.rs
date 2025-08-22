@@ -1,5 +1,6 @@
 #![deny(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 #![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::cargo)]
+#![cfg_attr(coverage_nightly, feature(coverage_attribute))]
 #![doc = include_str!("../readme.md")]
 
 #[cfg(feature = "axum")]

@@ -281,6 +281,7 @@ fn make_static_rewriter<O: OutputSink>(
 }
 
 #[cfg(test)]
+#[cfg_attr(coverage_nightly, coverage(off))]
 #[allow(clippy::expect_used, clippy::panic, clippy::unwrap_used)]
 mod parse_and_build {
     use std::{

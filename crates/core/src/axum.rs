@@ -74,6 +74,7 @@ where
 }
 
 #[cfg(test)]
+#[cfg_attr(coverage_nightly, coverage(off))]
 #[allow(clippy::expect_used)]
 mod tests {
     use axum::{
