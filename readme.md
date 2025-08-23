@@ -4,7 +4,6 @@
 >
 > *(HTML streaming: ancient wisdom, modern awakening, progressive enhancement™.)*
 
-
 HTMS is the absurdly simple answer to a dumbly persistent problem:
 you want async content that shows up progressively, and you want search engines to actually see it.
 
@@ -135,6 +134,29 @@ I'm having way too much fun building this to promise anything stable. Use it, br
 don't bet your startup on it just yet.
 
 **But hey,** if you're as curious about the future of HTML streaming as I am, welcome aboard this beautiful mess! 🚀
+
+## 💡 Ideas / Maybe Planned
+
+Some features I’m thinking about experimenting with:
+
+* **Lazy-load compiled templates** → right now everything is baked into the binary.
+* **Some configuration options**: e.g. define a root path for templates via an environment variable (currently resolved
+  from `CARGO_MANIFEST_DIR`).
+* **More `data-htms` modifiers**:
+    * `fn:` → bind an async Rust function (already supported)
+    * `include:` → include another file in the template (already supported)
+    * `wrap:` → wrap a template inside another with a `<slot/>` system
+    * `stream:` → stream a list of HTML fragment into a target container
+* **DOM injection helpers**: ergonomic APIs/modifiers for where the streamed content lands:
+    * `replace` (default), `append`, `prepend`, `before`, `after`
+    * Optional `selector:` to target a child node inside the placeholder
+* **Cache system** for async fragments (avoid recomputing heavy tasks).
+* **Error boundaries**: gracefully handle and display partial errors in chunks.
+* **Integrations**: helper adapters for frameworks (Actix, Warp, Poem, etc.) (Axum is already supported).
+
+Nothing guaranteed, just a playground of ideas. Contributions and experiments welcome 🚀
+
+**Have an idea or found a gap?** [Open an issue](https://github.com/skarab42/htms/issues/new/choose)
 
 ---
 
