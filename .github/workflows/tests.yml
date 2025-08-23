@@ -1,20 +1,16 @@
-name: ci
-
+name: tests
 on:
     push:
         branches: [ main ]
     pull_request:
         branches: [ '*' ]
-
 concurrency:
     group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
     cancel-in-progress: true
-
 permissions:
     contents: read
-
 jobs:
-    rust:
+    tests:
         strategy:
             fail-fast: false
             matrix:
@@ -24,22 +20,16 @@ jobs:
             CARGO_TERM_COLOR: always
         steps:
             -   uses: actions/checkout@v4
-
             -   uses: dtolnay/rust-toolchain@master
                 with:
                     toolchain: nightly
                     components: clippy, rustfmt
-
             -   uses: Swatinem/rust-cache@v2
-
             -   name: format
                 run: cargo format-ci
-
             -   name: lint
                 run: cargo lint-ci
-
             -   name: check
                 run: cargo check-ci
-
             -   name: tests
                 run: cargo tests
