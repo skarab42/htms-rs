@@ -13,10 +13,10 @@ makes
 sure the whole thing lands in the very first HTTP response. No hydration, no React-like ceremony, no SEO tax. Just async
 HTML that behaves like… HTML.
 
-[![Rust](https://img.shields.io/badge/rust-000000.svg?&style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
 [![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
 [![Streaming](https://img.shields.io/badge/streaming-💨-blue?style=for-the-badge)](https://github.com/skarab42/htms)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](license.md)
+[![Crates.io](https://img.shields.io/crates/v/htms.svg?style=for-the-badge&logo=rust)](https://crates.io/crates/htms)
 
 ---
 
@@ -24,8 +24,6 @@ HTML that behaves like… HTML.
 
 HTMS is primarily about **streaming HTML**. The core idea? Bind HTML `data-htms` attributes to auto-generated async
 methods that progressively replace content. Here's how it looks:
-
-HTMS is on [crates.io](https://crates.io/crates/htms) because, of course, it is.
 
 Write normal HTML with `data-htms` attributes:
 
