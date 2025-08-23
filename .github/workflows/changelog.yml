@@ -1,16 +1,12 @@
 name: changelog
-
 on:
     workflow_run:
-        workflows: [ ci ]
-        #        branches: [ main ]
+        workflows: [ tests ]
         types: [ completed ]
-
+        branches: [ main ]
 jobs:
     changelog:
-        if: ${{ github.event.workflow_run.conclusion == 'success' }}
-        #  if: ${{ github.event.workflow_run.conclusion == 'success'
-        #  && github.event.workflow_run.event == 'push' }}
+        if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' }}
         runs-on: ubuntu-latest
         permissions:
             contents: write
@@ -18,14 +14,12 @@ jobs:
         steps:
             -   uses: actions/checkout@v4
                 with: { fetch-depth: 0 }
-
             -   name: Generate changelog
                 uses: orhun/git-cliff-action@v4
                 with:
                     config: cliff.toml
                 env:
                     OUTPUT: changelog.md
-
             -   name: Create Pull Request
                 uses: peter-evans/create-pull-request@v6
                 with:
