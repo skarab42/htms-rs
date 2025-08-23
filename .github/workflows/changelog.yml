@@ -2,7 +2,7 @@ name: changelog
 
 on:
     pull_request:
-        branches: [ 'ci/add-changelog-workflow' ]
+        branches: [ '*' ]
 #    workflow_run:
 #        workflows: [ "tests" ]
 #        branches: [ "ci/add-changelog-workflow" ]
