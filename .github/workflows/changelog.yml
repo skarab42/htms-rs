@@ -38,4 +38,4 @@ jobs:
                     body: "Automated changelog update after CI success."
                     add-paths: |
                         changelog.md
-                    labels: automated,changelog
+                        
