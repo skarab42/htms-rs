@@ -1,0 +1,50 @@
+[changelog]
+body = """
+{% if version %}\
+  ## 💨 What's new in {{ version | trim_start_matches(pat="v") }} — {{ timestamp | date(format="%Y-%m-%d") }}
+{% else %}\
+  ## 🧪 What's coming next — Unreleased
+{% endif %}\
+{% for group, commits in commits | group_by(attribute="group") %}
+  ### {{ group | striptags | trim }}
+  {% for commit in commits %}
+    - {% if commit.scope %}**{{ commit.scope }}:** {% endif %}{{ commit.message | upper_first }}{% if commit.breaking %} **(BREAKING)**{% endif %} ({{ commit.id | truncate(length=7) }})
+  {% endfor %}
+{% endfor %}
+"""
+trim = true
+render_always = true
+
+[git]
+conventional_commits = true
+filter_unconventional = true
+require_conventional = false
+split_commits = false
+protect_breaking_commits = false
+
+# Groupes avec un index en commentaire HTML pour garder un ordre lisible.
+commit_parsers = [
+    # Toujours en premier
+    { body = "BREAKING CHANGE", group = "<!-- 00 -->💥 Breaking Changes" },
+    { message = "^feat", group = "<!-- 10 -->✨ Features" },
+    { message = "^fix", group = "<!-- 20 -->🐛 Bug Fixes" },
+    { message = "^(doc|docs)", group = "<!-- 30 -->📝 Docs" },
+    { message = "^perf", group = "<!-- 40 -->🚀 Performance" },
+    { message = "^refactor", group = "<!-- 50 -->♻️ Refactor" },
+    { message = "^style", group = "<!-- 60 -->🎨 Styling" },
+    { message = "^test", group = "<!-- 70 -->✅ Tests" },
+    { message = "^ci", group = "<!-- 80 -->🤖 CI" },
+    { message = "^(build|deps)", group = "<!-- 90 -->🏗️ Build" },
+    { message = "^revert", group = "<!-- 95 -->◀️ Revert" },
+    # Bruit / divers
+    { message = "^chore\\(release\\): prepare for", skip = true },
+    { message = "^merge", skip = true },
+    { message = ".*", group = "<!-- 99 -->📦 Other" },
+]
+
+filter_commits = false
+use_branch_tags = false
+topo_order = false
+topo_order_commits = true
+sort_commits = "newest"
+recurse_submodules = false

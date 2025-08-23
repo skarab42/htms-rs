@@ -1,0 +1,37 @@
+name: changelog
+
+on:
+    workflow_run:
+        workflows: [ tests ]
+        types: [ completed ]
+#        branches: [ main ]
+
+jobs:
+    changelog:
+        #        if: ${{ github.event.workflow_run.conclusion == 'success'
+        #            && github.event.workflow_run.event == 'push' }}
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            pull-requests: write
+        steps:
+            -   uses: actions/checkout@v4
+                with: { fetch-depth: 0 }
+
+            -   name: Generate changelog
+                uses: orhun/git-cliff-action@v4
+                with:
+                    config: cliff.toml
+                env:
+                    OUTPUT: changelog.md
+
+            -   name: Create Pull Request
+                uses: peter-evans/create-pull-request@v6
+                with:
+                    branch: chore/update-changelog
+                    commit-message: "chore: update `changelog.md`"
+                    title: "chore: update changelog.md"
+                    body: "Automated changelog update after CI success."
+                    add-paths: |
+                        changelog.md
+                    labels: automated,changelog
