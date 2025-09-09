@@ -17,6 +17,8 @@ HTML that behaves like… HTML.
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](license.md)
 [![Crates.io](https://img.shields.io/crates/v/htms.svg?style=for-the-badge&logo=rust)](https://crates.io/crates/htms)
 
+> 🟨 JavaScript dev? Check out [**htms-js**](https://github.com/skarab42/htms-js)
+
 ---
 
 ## ⚡ The 30-Second Demo
@@ -71,6 +73,12 @@ async fn home_page_handler() -> Response {
 
 **Result:** Your page appears instantly with static content, then sections fill in progressively as async tasks
 complete. All content is SEO-visible in the initial HTTP response.
+
+---
+
+## 💻 Try the live demo
+
+- https://htms.skarab42.dev
 
 ![](images/htms-dashboard-demo.gif "htms dashboard demo")
 
